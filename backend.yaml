@@ -38,7 +38,7 @@
 
   - name: unzip the backend code
     ansible.builtin.unarchive:
-      src: /tmp/backend/zip
+      src: /tmp/backend.zip
       dest: /app
       remote_src: yes 
       # by default it will checks in ansible server but if you give "remote_src: yes" then it will checks in remote server
