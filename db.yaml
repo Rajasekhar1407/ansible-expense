@@ -8,9 +8,16 @@
       name: mysql
       state: latest
 
+  - name: install python mysql dependencies
+    ansible.builtin.pip:
+      name:
+      - PyMySQL
+      - cryptography
+      executable: pip3.9 # pip3.11 if python version is 3.11
+
   - name: Start and Enabling MySQL
     ansible.builtin.service:
-      name: mysql
+      name: mysqld
       state: started
       enabled: yes
 
