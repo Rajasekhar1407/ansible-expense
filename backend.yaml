@@ -1,0 +1,102 @@
+- name: Backend Configuration
+  hosts: backend
+  become: yes
+
+  vars:
+    login_host: db.rajasekhar.online
+    login_password: ExpenseApp@1
+
+  tasks:
+  - name: Disable NodeJS
+    ansible.builtin.command: dnf module disable nodejs -y
+
+  - name: Enable NodeJS Version 20
+    ansible.builtin.command: dnf module enable nodejs:20 -y
+
+  - name: Installing NodeJS
+    ansible.builtin.dnf: # only works for Redhat family
+    loop:
+      - nodejs
+      - mysql
+      name: "{{ item }}"
+      state: installed
+
+  - name: create expense user
+    ansible.builtin.user: 
+      name: expense
+
+  - name: create app directory
+    ansible.builtin.file:
+      path: /app
+      state: directory # if you give file then it will create file
+
+  - name: download backend code
+    ansible.builtin.get_url:
+      url: https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip
+      dest: /tmp/backend.zip
+
+  - name: unzip the backend code
+    ansible.builtin.unarchive:
+      src: /tmp/backend/zip
+      dest: /app
+      remote_src: yes 
+      # by default it will checks in ansible server but if you give "remote_src: yes" then it will checks in remote server
+
+  - name: install dependencies
+    ansible.builtin.command: npm install
+    args:
+      chdir: /app 
+
+# In Ansible, the ansible.builtin.command module allows you to specify additional arguments to control the execution of the command. 
+# Here are some common arguments you can use:
+# chdir: Change to this directory before running the command.
+# creates: A filename, when it already exists, this step will not be run.
+# removes: A filename, when it does not exist, this step will not be run.
+# warn: Boolean flag to enable or disable command warnings.
+# stdin: Set the stdin of the command directly.
+# stdin_add_newline: Add a newline character to stdin data.
+# executable: Specify the executable to be used (for example, a different shell).
+# Example:
+# - name: Install dependencies only if package.json exists
+#   ansible.builtin.command: npm install
+#   args:
+#     chdir: /app
+#     creates: /app/node_modules
+#     warn: false
+#     stdin: "yes\n"
+#     executable: /bin/bash
+
+  - name: copy backend service
+    ansible.buitin.copy: # this module will copy a file from source to destination
+      src: backend.service
+      dest: /etc/systemd/system/backend.service
+
+  - name: install python mysql dependencies
+    ansible.builtin.pip: 
+      name:
+      - PyMySQL # to connect MySQL DB from Ansible
+      - cryptography
+      executable: pip3.9 # pip3.11 if python version is 3.11
+
+  - name: import data into MySQL
+    community.mysql.mysql_db:
+      login_user: root
+      login_password: "{{ login_password }}"
+      login_host: "{{ login_host }}"
+      target: /app/schema/backend.sql
+      state: import
+      name: all
+
+  - name: demon reload
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+
+# ansible.builtin.systemd: The Ansible module used for interacting with systemd services.
+# daemon_reload: The key to reload the systemd manager configuration.
+# This task will reload the systemd daemon, which is necessary after making changes to service unit files.
+
+  - name: start and enable backend
+    ansible.builtin.service:
+      name: backend
+      state: started
+      enabled: yes
