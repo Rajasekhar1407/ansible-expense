@@ -25,7 +25,7 @@
   - name: check DB Connection
     community.mysql.mysql_info:
       login_user: root
-      login_password: ExpensceApp@321
+      login_password: ExpensceApp@1
       login_host: ansible.rajasekhar.online
       filter: version
      # register: mysql_info
