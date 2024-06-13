@@ -30,5 +30,5 @@ resource "aws_route53_record" "ansible_practice_frontend" {
   name    = "rajasekhar.online"
   type    = "A"
   ttl     = 1
-  records = [aws_instance.ansible_practice.3.private_ip]
+  records = [aws_instance.ansible_practice.3.public_ip]
 }
