@@ -2,6 +2,14 @@
   hosts: web
   become: yes
 
+  vars:
+   login_host: ansible.rajasekhar.online
+
+  vars_prompt:
+  - name: MySQL_root_Password 
+    prompt: Please enter MySQL root Password
+    private: no
+
   tasks:
   - name: installing MYSQL
     ansible.builtin.dnf:
@@ -25,14 +33,14 @@
   - name: check DB Connection
     community.mysql.mysql_info:
       login_user: root
-      login_password: ExpensceApp@1
-      login_host: ansible.rajasekhar.online
+      login_password: "{{ MySQL_root_Password }}"
+      login_host: "{{ login_host }}"
       filter: version
-     # register: mysql_info
+      register: mysql_connection_output
 
   - name: print mysql info
     ansible.builtin.debug:
-      msg: "Output is : {{ mysql_info}}"
+      msg: "Output is : {{ mysql_connection_output }}"
 
   - name: Setting up MySQL root password
     ansible.builtin.command: mysql_secure_installation --set-root-pass ExpenseApp@1
