@@ -8,15 +8,11 @@
       name: mysql
       state: latest
 
-  - name: Enabling MySQL
+  - name: Start and Enabling MySQL
     ansible.builtin.service:
       name: mysqld
-      state: enabled
-
-  - name: Starting MySQL
-    ansible.builtin.service:
-      name: mysql
-      state: start
+      state: started
+      enabling: yes
 
   - name: Setting up MySQL root password
     ansible.builtin.command: mysql_secure_installation --set-root-pass ExpenseApp@1
