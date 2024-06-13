@@ -17,6 +17,7 @@
 # check whether password setup is done or not
   - name: check DB Connection
     community.mysql.mysql_info:
+   # community.mysql.mysql_info:
       login_user: root
       login_password: ExpensceApp@321
       login_host: ansible.rajasekhar.online
@@ -25,7 +26,7 @@
 
   - name: print mysql info
     ansible.builtin.debug:
-      msg: "{{ mysql_info}}"
+      msg: "Output is : {{ mysql_info}}"
 
   # - name: install python mysql dependencies
   #   ansible.builtin.pip:
