@@ -68,7 +68,7 @@
 #     executable: /bin/bash
 
   - name: copy backend service
-    ansible.buitin.copy: # this module will copy a file from source to destination
+    ansible.builtin.copy: # this module will copy a file from source to destination
       src: backend.service
       dest: /etc/systemd/system/backend.service
 
