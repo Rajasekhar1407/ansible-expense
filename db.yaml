@@ -24,12 +24,11 @@
 # check whether password setup is done or not
   - name: check DB Connection
     community.mysql.mysql_info:
-   # community.mysql.mysql_info:
       login_user: root
       login_password: ExpensceApp@321
       login_host: ansible.rajasekhar.online
       filter: version
-      register: mysql_info
+     # register: mysql_info
 
   - name: print mysql info
     ansible.builtin.debug:
