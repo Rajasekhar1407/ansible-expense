@@ -14,6 +14,13 @@
       state: started
       enabled: yes
 
+  - name: install python mysql dependencies
+    ansible.builtin.pip:
+      name:
+      - PyMySQL
+      - cryptography
+      executable: pip3.9 # pip3.11 if python version is 3.11
+
 # check whether password setup is done or not
   - name: check DB Connection
     community.mysql.mysql_info:
@@ -27,14 +34,6 @@
   - name: print mysql info
     ansible.builtin.debug:
       msg: "Output is : {{ mysql_info}}"
-
-  # - name: install python mysql dependencies
-  #   ansible.builtin.pip:
-  #     name:
-  #     - PyMySQL
-  #     - cryptography
-  #     executable: pip3.9 # pip3.11 if python version is 3.11
-
 
   - name: Setting up MySQL root password
     ansible.builtin.command: mysql_secure_installation --set-root-pass ExpenseApp@1
