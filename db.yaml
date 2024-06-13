@@ -36,6 +36,7 @@
       login_password: "{{ MySQL_root_Password }}"
       login_host: "{{ login_host }}"
       filter: version
+    ignore_errors: yes
     register: mysql_connection_output
 
   - name: print mysql info
