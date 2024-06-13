@@ -14,6 +14,19 @@
       state: started
       enabled: yes
 
+# check whether password setup is done or not
+  - name: check DB Connection
+    community.mysql.mysql_info:
+      login_user: root
+      login_password: ExpensceApp@321
+      login_host: ansible.rajasekhar.online
+      filter: version
+      register: mysql_info
+
+  - name: print mysql info
+    ansible.builtin.debug:
+      msg: "{{ mysql_info}}"
+
   # - name: install python mysql dependencies
   #   ansible.builtin.pip:
   #     name:
@@ -21,11 +34,6 @@
   #     - cryptography
   #     executable: pip3.9 # pip3.11 if python version is 3.11
 
-  # - name: Start and Enabling MySQL
-  #   ansible.builtin.service:
-  #     name: mysqld
-  #     state: started
-  #     enabled: yes
 
   - name: Setting up MySQL root password
     ansible.builtin.command: mysql_secure_installation --set-root-pass ExpenseApp@1
